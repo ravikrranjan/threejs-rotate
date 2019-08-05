@@ -51,10 +51,10 @@ var TransformControls = function (camera, domElement) {
 	defineProperty("object", undefined);
 	defineProperty("enabled", true);
 	defineProperty("axis", null);
-	defineProperty("mode", "rotate");
+	defineProperty("mode", "translate");
 	defineProperty("translationSnap", null);
 	defineProperty("rotationSnap", null);
-	defineProperty("space", "local");
+	defineProperty("space", "world");
 	defineProperty("size", 1);
 	defineProperty("dragging", false);
 	defineProperty("showX", true);
@@ -501,17 +501,21 @@ var TransformControls = function (camera, domElement) {
 
 			var ROTATION_SPEED = 20 / worldPosition.distanceTo(_tempVector.setFromMatrixPosition(this.camera.matrixWorld));
 
-			console.log('---axis-->', axis);
+			// console.log('---axis-->', axis);
 
 			if (axis === 'X' || axis === 'Z' || axis === 'Y') {
 				rotationAxis.copy(_unit[axis]);
 				// rotationAxis.copy(eye);
+
+				//Returns the angle between 'pointEnd' vector and vector 'pointStart' in radians.
 				rotationAngle = pointEnd.angleTo(pointStart);
 
-				console.log('---rotationAngle--1--->', rotationAngle);
+				// console.log('---rotationAngle--1--->', rotationAngle);
 
 				startNorm.copy(pointStart).normalize();
 				endNorm.copy(pointEnd).normalize();
+
+				console.log('startNorm----', startNorm, pointStart);
 
 				rotationAngle *= (endNorm.cross(startNorm).dot(eye) < 0 ? 1 : -1);
 
@@ -519,7 +523,7 @@ var TransformControls = function (camera, domElement) {
 				object.quaternion.copy(_tempQuaternion.setFromAxisAngle(rotationAxis, rotationAngle));
 				// object.quaternion.multiply(quaternionStart).normalize();
 
-				console.log('rotationAngle---->', rotationAngle, object.rotation);
+				// console.log('rotationAngle---->', rotationAngle, object.rotation);
 
 
 			}
@@ -765,8 +769,13 @@ var TransformControlsGizmo = function () {
 
 		}
 
+		console.log('-------vertices--', vertices);
+		console.log('-------geometry--', geometry);
+
+
 		geometry.addAttribute('position', new Float32BufferAttribute(vertices, 3));
 
+		console.log('-------geometry--', geometry);
 		return geometry;
 
 	};
@@ -1308,7 +1317,7 @@ var TransformControlsGizmo = function () {
 
 			handle.quaternion.copy(quaternion);
 
-			if (this.mode === 'translate' || this.mode === 'scale') {
+			if (this.mode === 'translate' || this.mode === 'rotate') {
 
 				// Hide translate and scale axis facing the camera
 
@@ -1556,6 +1565,7 @@ var TransformControlsPlane = function () {
 
 			case 'translate':
 			case 'scale':
+			case 'rotate':
 				switch (this.axis) {
 
 					case 'X':
@@ -1587,7 +1597,7 @@ var TransformControlsPlane = function () {
 
 				}
 				break;
-			case 'rotate':
+				// case 'rotate':
 			default:
 				// special case for rotate
 				dirVector.set(0, 0, 0);

@@ -18,7 +18,21 @@
 
 	<script type="module">
 
-		import * as THREE from './build/three.module.js';
+		import { WebGLRenderer,
+			ArrowHelper,
+			BoxBufferGeometry, 
+			Scene, 
+			PerspectiveCamera,
+			GridHelper,
+			DirectionalLight,
+			MeshLambertMaterial,
+			TextureLoader,
+			Mesh,
+			AxesHelper
+			
+		} from './build/three.module.js';
+
+		// import { ArrowHelper }from './build/three.module.js';
 
 			import { OrbitControls } from './js/controls/OrbitControls.js';
 			import { TransformControls } from './js/controls/TransformControls.js';
@@ -30,29 +44,29 @@
 
 			function init() {
 
-				renderer = new THREE.WebGLRenderer();
+				renderer = new WebGLRenderer();
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				document.body.appendChild( renderer.domElement );
 
 				//
 
-				camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 3000 );
+				camera = new PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 3000 );
 				camera.position.set( 1000, 500, 1000 );
 				camera.lookAt( 0, 200, 0 );
 
-				scene = new THREE.Scene();
-				scene.add( new THREE.GridHelper( 1000, 10 ) );
+				scene = new Scene();
+				scene.add( new GridHelper( 1000, 10 ) );
 
-				var light = new THREE.DirectionalLight( 0xffffff, 2 );
+				var light = new DirectionalLight( 0xffffff, 2 );
 				light.position.set( 1, 1, 1 );
 				scene.add( light );
 
-				var texture = new THREE.TextureLoader().load( 'textures/crate.gif', render );
+				var texture = new TextureLoader().load( 'textures/crate.gif', render );
 				texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
-				var geometry = new THREE.BoxBufferGeometry( 200, 200, 200 );
-				var material = new THREE.MeshLambertMaterial( { map: texture, transparent: true } );
+				var geometry = new BoxBufferGeometry( 200, 200, 200 );
+				var material = new MeshLambertMaterial( { map: texture, transparent: true } );
 
 				orbit = new OrbitControls( camera, renderer.domElement );
 				orbit.update();
@@ -63,15 +77,27 @@
 
 				control.addEventListener( 'dragging-changed', function ( event ) {
 
-					orbit.enabled = false;
+					orbit.enabled = !orbit.enabled;
 
 				} );
 
-				var mesh = new THREE.Mesh( geometry, material );
+				var mesh = new Mesh( geometry, material );
 				scene.add( mesh );
 
 				control.attach( mesh );
 				scene.add( control );
+
+
+				//Arrow Helper
+				{
+					let arrowHelper = new ArrowHelper();
+					scene.add(arrowHelper)
+				}
+
+				{
+					let axesHelper = new AxesHelper(1000);
+					scene.add(axesHelper);
+				}
 
 				window.addEventListener( 'resize', onWindowResize, false );
 

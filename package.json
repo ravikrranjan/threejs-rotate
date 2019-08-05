@@ -1,0 +1,20 @@
+{
+  "name": "misc_controls_transform",
+  "version": "1.0.0",
+  "description": "ls",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test",
+    "start": "live-server . --port=1234 --host=localhost"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ravikrranjan/threejs-rotate.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ravikrranjan/threejs-rotate/issues"
+  },
+  "homepage": "https://github.com/ravikrranjan/threejs-rotate#readme"
+}
