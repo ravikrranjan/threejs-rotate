@@ -28,7 +28,16 @@
 			MeshLambertMaterial,
 			TextureLoader,
 			Mesh,
-			AxesHelper
+			AxesHelper,
+			PlaneHelper,
+			Plane,
+			Vector3,
+			PointLight,
+			PointLightHelper,
+			BufferGeometry,
+			Float32BufferAttribute,
+			PointsMaterial,
+			Points
 			
 		} from './build/three.module.js';
 
@@ -82,21 +91,106 @@
 				} );
 
 				var mesh = new Mesh( geometry, material );
-				scene.add( mesh );
+				// scene.add( mesh );
 
-				control.attach( mesh );
+				// control.attach( mesh );
 				scene.add( control );
 
+			{
+				console.log(camera, orbit);
 
+				let position = camera.position;
+				let target = orbit.target;
+
+				let eye = position.sub(target);
+				let eyeLegth = eye.length();
+
+				let targtePlane = new Plane(new Vector3(eye.x/eyeLegth, eye.y/eyeLegth, eye.z/eyeLegth), -1000	);
+
+				
+				
+
+				var helper = new PlaneHelper( targtePlane, 100, 0xffff00 );
+				scene.add( helper );
+			}
+
+			{
+
+let x = window.innerWidth/ 2;
+let y = window.innerHeight / 2;
+				var vec = new Vector3(); // create once and reuse
+				var pos = new Vector3(); // create once and reuse
+			let X = ( x / window.innerWidth ) * 2 - 1; 
+
+			let Y = - ( y / window.innerHeight ) * 2 + 1;
+			console.log(X);
+			console.log(X);
+// -0.8402555910543131
+// -0.8402555910543131
+				vec.set(
+				X,
+				Y,
+				.5); 
+				console.log('set--',vec);
+				
+				// Vector3 {x: -0.8402555910543131, y: 0.25373134328358204, z: 0.5}
+
+			console.log(camera.position);
+
+			// console.log(camera.projectionMatrixInverse); //Vector3 {x: 1000, y: 499.9999999999999, z: 1000.0000000000001}
+			
+			vec.unproject( camera ); //Vector3 {x: 992.0524883752328, y: 499.11375376642536, z: 1002.3966287475487}
+
+			// Vector3 {x: -0.8402555910543131, y: 0.25373134328358204, z: 0.5}
+			// Vector3 {x: -0.8402555910543131, y: 0.25373134328358204, z: 0.5}
+			vec.sub( camera.position ); //Vector3 {x: -7.94751162476723, y: -0.8862462335745249, z: 2.3966287475485615}
+vec.normalize(); //Vector3 {x: -0.9520046640311683, y: -0.10616034146004974, z: 0.2870837884032956}Vector3 {x: -0.9520046640311683, y: -0.10616034146004974, z: 0.2870837884032956}
+
+
+			console.log(vec);
+			var distance = - camera.position.z / vec.z;
+
+console.log(distance);
+
+				let vertices = [];
+				vertices.push(vec.x, vec.y, vec.z);
+			var geometry = new BufferGeometry();
+			geometry.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+
+			var material = new PointsMaterial( { color: 0x888888 } );
+
+			var points = new Points( geometry, material );
+
+			scene.add( points );
+
+				
+
+				// vec.sub( camera.position ).normalize();
+
+				// var distance = - camera.position.z / vec.z;
+
+				// pos.copy( camera.position ).add( vec.multiplyScalar( distance ) );
+			}
+
+			{
+
+				var pointLight = new PointLight( 0xff0000, 1, 100 );
+				pointLight.position.set( 10, 10, 10 );
+				scene.add( pointLight );
+
+				var sphereSize = 1;
+				var pointLightHelper = new PointLightHelper( pointLight, sphereSize );
+				scene.add( pointLightHelper );
+			}
 				//Arrow Helper
 				{
 					let arrowHelper = new ArrowHelper();
-					scene.add(arrowHelper)
+					// scene.add(arrowHelper)
 				}
 
 				{
 					let axesHelper = new AxesHelper(1000);
-					scene.add(axesHelper);
+					// scene.add(axesHelper);
 				}
 
 				window.addEventListener( 'resize', onWindowResize, false );
